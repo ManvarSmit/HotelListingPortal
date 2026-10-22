@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
 import flatpickr from "flatpickr";
+import ReviewSentiment from "../components/ReviewSentiment";
 
 export default function ListingShow({ currUser }) {
   const { id } = useParams();
@@ -300,6 +301,12 @@ export default function ListingShow({ currUser }) {
                   <strong>Verified Stay Required:</strong> Only guests who have booked and checked in to this hotel can leave a review.
                 </div>
               ) : null}
+
+              {/* AI Review Sentiment Summary */}
+              <ReviewSentiment
+                listingId={id}
+                reviewCount={listing.reviews ? listing.reviews.length : 0}
+              />
 
               <div className="row g-3">
                 {(!listing.reviews || listing.reviews.length === 0) ? (

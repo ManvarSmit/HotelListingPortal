@@ -21,6 +21,7 @@ const userRouter = require("./routes/user.js");
 const reviewRouter = require("./routes/review.js");
 const listingRouter = require("./routes/listing.js");
 const bookingRouter = require("./routes/booking.js");
+const aiRouter = require("./routes/ai.js");
 
 app.use(cors({
   origin: "http://localhost:5173",
@@ -74,6 +75,7 @@ app.use("/listings", listingRouter);
 app.use("/listings/:id/reviews", reviewRouter);
 app.use("/listings/:id/bookings", bookingRouter);
 app.use("/bookings", bookingRouter);
+app.use("/api/ai", aiRouter);
 app.use("/", userRouter);
 
 app.all("*all", (req, res, next) => {
