@@ -1,0 +1,65 @@
+body {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+    font-family: 'Plus Jakarta Sans', 'Poppins', -apple-system, BlinkMacSystemFont, sans-serif;
+    background-color: #fcfcfc;
+}
+
+#root {
+    display: flex;
+    flex-direction: column;
+    min-height: 100vh;
+}
+
+.container {
+    flex: 1;
+}
+
+/* Navbar */
+.navbar {
+    height: 3.8rem;
+    background-color: white;
+}
+
+.fa-compass {
+    color: #fe424d;
+    font-size: 1.6rem;
+}
+
+.nav-link {
+    color: #222222 !important;
+    font-weight: 500;
+}
+
+/* Cards */
+.listing-card {
+    border: none !important;
+    margin-bottom: 1.5rem;
+    transition: transform 0.2s ease-in-out;
+}
+
+.listing-card:hover {
+    transform: translateY(-3px);
+}
+
+.listing-link {
+    text-decoration: none;
+}
+
+/* Buttons */
+.btn-danger {
+    background-color: #fe424d !important;
+    border-color: #fe424d !important;
+}
+
+.btn-danger:hover {
+    background-color: #e03944 !important;
+    border-color: #e03944 !important;
+}
+
+/* Footer */
+footer {
+    background-color: #f1f1f1;
+    border-top: 1px solid #e2e2e2;
+}

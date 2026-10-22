@@ -1,0 +1,90 @@
+if(process.env.NODE_ENV != "production"){
+  require("dotenv").config();
+}
+
+const express = require("express");
+const app = express();
+const path = require("path");
+const methodOverride = require("method-override");
+const port = 3000;
+const ExpressError = require("./utils/ExpressError.js");
+const session = require("express-session");
+const flash = require("connect-flash");
+const passport = require("passport");
+const LocalStrategy = require("passport-local");
+const cors = require("cors");
+
+const sequelize = require("./config/db.js");
+const { User } = require("./models");
+
+const userRouter = require("./routes/user.js");
+const reviewRouter = require("./routes/review.js");
+const listingRouter = require("./routes/listing.js");
+const bookingRouter = require("./routes/booking.js");
+
+app.use(cors({
+  origin: "http://localhost:5173",
+  credentials: true,
+}));
+app.use(express.json());
+app.use(express.urlencoded({ extended: true }));
+app.use(methodOverride("_method"));
+
+const sessionOptions = {
+  secret: process.env.SESSION_SECRET || "mysupersecretcode",
+  resave: false,
+  saveUninitialized: false,
+  cookie: {
+    expires: new Date(Date.now() + 7 * 24 * 60 * 60 * 1000),
+    maxAge: 7 * 24 * 60 * 60 * 1000,
+    httpOnly: true,
+    sameSite: "lax",
+  },
+};
+
+app.use(session(sessionOptions));
+app.use(flash());
+
+app.use(passport.initialize());
+app.use(passport.session());
+passport.use(new LocalStrategy({ usernameField: "email" }, User.authenticate()));
+
+passport.serializeUser(User.serializeUser());
+passport.deserializeUser(User.deserializeUser());
+
+app.use((req, res, next) => {
+  res.locals.currUser = req.user;
+  next();
+});
+
+main()
+  .then(() => console.log("PostgreSQL connection successful"))
+  .catch((err) => console.log("PostgreSQL connection error:", err));
+
+async function main() {
+  await sequelize.authenticate();
+  await sequelize.sync();
+}
+
+app.get("/", (req, res) => {
+  res.redirect("http://localhost:5173");
+});
+
+app.use("/listings", listingRouter);
+app.use("/listings/:id/reviews", reviewRouter);
+app.use("/listings/:id/bookings", bookingRouter);
+app.use("/bookings", bookingRouter);
+app.use("/", userRouter);
+
+app.all("*all", (req, res, next) => {
+  next(new ExpressError(404, "API Endpoint Not Found"));
+});
+
+app.use((err, req, res, next) => {
+  let { statusCode = 500, message = "Something went wrong" } = err;
+  res.status(statusCode).json({ error: message });
+});
+
+app.listen(port, () => {
+  console.log(`Server is running as REST API on port ${port}`);
+});
